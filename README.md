@@ -1,2 +1,2 @@
 # iter
-Repo that contains backend 
+Repo that contains monolith iter app
