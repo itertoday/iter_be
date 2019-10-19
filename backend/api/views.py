@@ -84,3 +84,19 @@ class PasswordResetView:
         )
         msg.attach_alternative(email_html_message, "text/html")
         msg.send()
+
+from rest_framework import authentication, permissions
+# from rest_framework.response import Response
+from api.serializers import RequestSerializer, OrderSerializer
+from rest_framework import viewsets
+from core.models import Request, Order
+
+class RequestViewSet(viewsets.ModelViewSet):
+    queryset = Request.objects.all() # TODO: show requests per user
+    serializer_class = RequestSerializer
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+    #                       permissions.IsOwnerOrReadOnly,)
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all() # TODO: Show this per user only
+    serializer_class = OrderSerializer

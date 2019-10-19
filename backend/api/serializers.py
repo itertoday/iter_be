@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from api.models import Profile
+from core.models import Request, RequestItem, Order
+from core.service import generateOrder
 from rest_framework import serializers
-
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -34,3 +35,40 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         profile.phone = profile_data.get('phone', profile.phone)
         profile.save()
         return instance
+
+class RequestItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RequestItem
+        exclude = ( 'request', )
+
+class RequestSerializer(serializers.ModelSerializer):
+
+    items = RequestItemSerializer(many=True)
+
+    class Meta:
+        model = Request
+        fields = ('start_date', 'end_date', 'repeat', 'user', 'address', 'address2', 'city', 'items')
+
+    def create(self, validated_data):
+        ''' Saving the items requested '''
+        params = validated_data.copy()
+        items = params.pop('items')
+        request = Request(**params)
+        request.update_lat_lon()
+        request.save() 
+        for elem in items:
+            reqItem = RequestItem(**elem)
+            reqItem.request = request
+            reqItem.save()
+        generateOrder(request) # Not sure if this goes here.
+        return request
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    request = RequestSerializer(many=False)
+    # if a transport accept, find the way to display it here
+
+    class Meta:
+        model = Order
+        fields ='__all__'
