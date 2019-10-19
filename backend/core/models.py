@@ -7,8 +7,15 @@ from geopy.distance import vincenty as distance # TODO: Should wrap this into so
 from supply.models import TransportOrder, LocationSupply, Transport
 from operator import itemgetter
 
+
+class Sponsor(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(blank=True)
+
+
 class Product(models.Model):
     name = models.CharField(max_length=50)
+    sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
