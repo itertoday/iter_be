@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,9 +44,13 @@ INSTALLED_APPS = [
     'django_rest_passwordreset',
     'knox',
     'api',
+    'core',
+    'price',
+    'supply',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -136,3 +141,9 @@ DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CORS_ORIGIN_WHITELIST = [ "http://localhost:3000", "http://127.0.0.1:3000" ]
+
+ALLOWED_HOSTS = ['*']
+
+PRICE_URL = 'http://localhost:8000/pricing/'
