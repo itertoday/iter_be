@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from api.models import Profile
-from core.models import Request, RequestItem, Order
+from core.models import Request, RequestItem, Order, Sponsor
 from core.service import generateOrder
 from rest_framework import serializers
 
@@ -64,6 +64,12 @@ class RequestSerializer(serializers.ModelSerializer):
         generateOrder(request) # Not sure if this goes here.
         return request
 
+
+class SponsorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Sponsor
+        fields = '__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
     request = RequestSerializer(many=False)
