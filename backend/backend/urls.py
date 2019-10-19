@@ -18,9 +18,18 @@ from django.urls import path, include
 from rest_framework import routers
 from api import views
 from knox import views as knox_views
+from api.views import RequestViewSet, OrderViewSet
+from rest_framework import routers
+from price.views import PriceViewset
+
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
+router.register('requests', RequestViewSet)
+router.register('orders', OrderViewSet)
+
+router.register('pricing', PriceViewset, basename="pricing")
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
