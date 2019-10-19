@@ -27,7 +27,6 @@ router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register('requests', RequestViewSet)
 router.register('orders', OrderViewSet)
-
 router.register('pricing', PriceViewset, basename="pricing")
 
 
