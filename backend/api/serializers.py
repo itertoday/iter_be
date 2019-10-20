@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from api.models import Profile
-from core.models import Request, RequestItem, Order, Sponsor
+from core.models import Request, RequestItem, Order, Sponsor, Product
 from core.service import generateOrder
 from rest_framework import serializers
 
@@ -8,6 +8,12 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
         fields = ['address', 'phone']
+
+class ProductSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Product
+        fields = '__all__' 
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,10 +44,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class RequestItemSerializer(serializers.ModelSerializer):
 
+    product = ProductSerializer(many=False)
+
     class Meta:
         model = RequestItem
-        exclude = ( 'request', )
-
+        fields = ('id', 'quantity', 'request_type', 'product')
 class RequestSerializer(serializers.ModelSerializer):
 
     items = RequestItemSerializer(many=True)
