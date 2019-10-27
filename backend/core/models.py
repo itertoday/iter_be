@@ -40,6 +40,9 @@ class Request(models.Model):
         if address:
             self.latitude = address.latitude
             self.longitude = address.longitude
+        else:
+            self.latitude = 0.0
+            self.longitude = 0.0
 
     @property
     def coordinate(self):
@@ -59,12 +62,13 @@ class RequestItem(models.Model):
     )
 
     request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="items")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField()
     request_type = models.CharField(max_length=100, choices=REQUEST_TYPE)
 
     def __str__(self):
         return "Item: {} - {} - {}".format(self.quantity, self.request_type, self.product)
+
 
 class Order(models.Model):
     PENDING = 'pending'
@@ -93,23 +97,22 @@ class Order(models.Model):
         # Done this way only for demo purposes
         # It is heavy
         if self.status == self.PENDING:
-            request_coord = self.request.coordinate
-            distances = [] # This will store all distances from request and available destinations
-            transport_winner = None
-            # This can be more compact
-            for _location in LocationSupply.objects.all():
-                dist = distance(request_coord, _location.coordinate).km
-                distances.append((_location, dist))
+            print("PENDIIIING")
+            # request_coord = self.request.coordinate
+            # distances = [] # This will store all distances from request and available destinations
+            # transport_winner = None
+            # # This can be more compact
+            # for _location in LocationSupply.objects.all():
+            #     dist = distance(request_coord, _location.coordinate).km
+            #     distances.append((_location, dist))
 
-            location_winner = min(distances, key=itemgetter(1))[0]
+            # location_winner = min(distances, key=itemgetter(1))[0]
 
-            #Fetch correct transport
-            for tp in Transport.objects.all():
-                transport_winner = tp if location_winner in tp.locations.all() else None
+            # #Fetch correct transport
+            # for tp in Transport.objects.all():
+            #     transport_winner = tp if location_winner in tp.locations.all() else None
 
-            TransportOrder.objects.create(transport=transport_winner, order=self)
+            # TransportOrder.objects.create(transport=transport_winner, order=self)
 
     def __str__(self):
         return "Order: {}".format(self.id)
-        
-

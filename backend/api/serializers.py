@@ -3,17 +3,26 @@ from api.models import Profile
 from core.models import Request, RequestItem, Order, Sponsor, Product
 from core.service import generateOrder
 from rest_framework import serializers
+from django.shortcuts import get_object_or_404
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
         fields = ['address', 'phone']
 
+class SponsorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Sponsor
+        fields = '__all__'
+
 class ProductSerializer(serializers.ModelSerializer):
+
+    sponsor = SponsorSerializer(many=False)
 
     class Meta:
         model = Product
-        fields = '__all__' 
+        fields = ('id', 'name', 'sponsor')
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -44,11 +53,19 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class RequestItemSerializer(serializers.ModelSerializer):
 
-    product = ProductSerializer(many=False)
+    product = ProductSerializer(many=False, read_only=True)
 
     class Meta:
         model = RequestItem
         fields = ('id', 'quantity', 'request_type', 'product')
+
+class RequestItemWriterSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RequestItem
+        fields = ('id', 'quantity', 'request_type', 'product')
+        
+
 class RequestSerializer(serializers.ModelSerializer):
 
     items = RequestItemSerializer(many=True)
@@ -65,18 +82,14 @@ class RequestSerializer(serializers.ModelSerializer):
         request.update_lat_lon()
         request.save() 
         for elem in items:
+            # productParams = elem.pop('product')
+            # print("product paraaams: ", productParams)
+            # get_object_or_404(Product, **productParams)
             reqItem = RequestItem(**elem)
             reqItem.request = request
             reqItem.save()
         generateOrder(request) # Not sure if this goes here.
         return request
-
-
-class SponsorSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Sponsor
-        fields = '__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
     request = RequestSerializer(many=False)
@@ -85,3 +98,27 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields ='__all__'
+
+class RequestWriterSerializer(serializers.ModelSerializer):
+    items = RequestItemWriterSerializer(many=True)
+
+    class Meta:
+        model = Request
+        fields = ('start_date', 'end_date', 'repeat', 'user', 'address', 'address2', 'city', 'items')
+
+    def create(self, validated_data):
+        ''' Saving the items requested '''
+        params = validated_data.copy()
+        items = params.pop('items')
+        request = Request(**params)
+        request.update_lat_lon()
+        request.save() 
+        for elem in items:
+            # productParams = elem.pop('product')
+            # print("product paraaams: ", productParams)
+            # get_object_or_404(Product, **productParams)
+            reqItem = RequestItem(**elem)
+            reqItem.request = request
+            reqItem.save()
+        generateOrder(request) # Not sure if this goes here.
+        return request

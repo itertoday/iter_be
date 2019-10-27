@@ -13,6 +13,12 @@ from rest_framework.response import Response
 from knox.auth import TokenAuthentication
 from knox.views import LoginView as KnoxLoginView
 from django_rest_passwordreset.signals import reset_password_token_created
+from rest_framework import authentication, permissions
+# from rest_framework.response import Response
+from api.serializers import RequestSerializer, RequestWriterSerializer, OrderSerializer, ProductSerializer
+from rest_framework import viewsets
+from core.models import Request, Order, Product
+from rest_framework import status
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -85,18 +91,24 @@ class PasswordResetView:
         msg.attach_alternative(email_html_message, "text/html")
         msg.send()
 
-from rest_framework import authentication, permissions
-# from rest_framework.response import Response
-from api.serializers import RequestSerializer, OrderSerializer
-from rest_framework import viewsets
-from core.models import Request, Order
-
 class RequestViewSet(viewsets.ModelViewSet):
     queryset = Request.objects.all() # TODO: show requests per user
     serializer_class = RequestSerializer
+    write_serializer_class = RequestWriterSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,
     #                       permissions.IsOwnerOrReadOnly,)
+
+    def get_serializer_class(self):
+        print("called", self.action)
+        if self.action == 'create':
+            return self.write_serializer_class
+        return self.serializer_class
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all() # TODO: Show this per user only
     serializer_class = OrderSerializer
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
