@@ -3,12 +3,13 @@ from api.models import Profile
 from core.models import Request, RequestItem, Order, Sponsor, Product
 from core.service import generateOrder
 from rest_framework import serializers
-from django.shortcuts import get_object_or_404
+
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
         fields = ['address', 'phone']
+
 
 class ProductSerializer(serializers.ModelSerializer):
 
@@ -43,12 +44,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         profile.save()
         return instance
 
+
 class RequestItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RequestItem
         fields = ('id', 'quantity', 'request_type', 'product')
         depth = 2
+
 
 class RequestItemWriterSerializer(serializers.ModelSerializer):
 
