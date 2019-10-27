@@ -65,22 +65,6 @@ class RequestSerializer(serializers.ModelSerializer):
         model = Request
         fields = ('start_date', 'end_date', 'repeat', 'user', 'address', 'address2', 'city', 'items')
 
-    def create(self, validated_data):
-        ''' Saving the items requested '''
-        params = validated_data.copy()
-        items = params.pop('items')
-        request = Request(**params)
-        request.update_lat_lon()
-        request.save() 
-        for elem in items:
-            # productParams = elem.pop('product')
-            # print("product paraaams: ", productParams)
-            # get_object_or_404(Product, **productParams)
-            reqItem = RequestItem(**elem)
-            reqItem.request = request
-            reqItem.save()
-        generateOrder(request) # Not sure if this goes here.
-        return request
 
 class OrderSerializer(serializers.ModelSerializer):
     request = RequestSerializer(many=False)
@@ -89,6 +73,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields ='__all__'
+
 
 class RequestWriterSerializer(serializers.ModelSerializer):
     items = RequestItemWriterSerializer(many=True)
