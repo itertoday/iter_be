@@ -10,15 +10,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
         model = Profile
         fields = ['address', 'phone']
 
-class SponsorSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Sponsor
-        fields = '__all__'
-
 class ProductSerializer(serializers.ModelSerializer):
-
-    sponsor = SponsorSerializer(many=False)
 
     class Meta:
         model = Product
@@ -53,11 +45,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class RequestItemSerializer(serializers.ModelSerializer):
 
-    product = ProductSerializer(many=False, read_only=True)
-
     class Meta:
         model = RequestItem
         fields = ('id', 'quantity', 'request_type', 'product')
+        depth = 2
 
 class RequestItemWriterSerializer(serializers.ModelSerializer):
 
@@ -114,11 +105,8 @@ class RequestWriterSerializer(serializers.ModelSerializer):
         request.update_lat_lon()
         request.save() 
         for elem in items:
-            # productParams = elem.pop('product')
-            # print("product paraaams: ", productParams)
-            # get_object_or_404(Product, **productParams)
             reqItem = RequestItem(**elem)
             reqItem.request = request
             reqItem.save()
-        generateOrder(request) # Not sure if this goes here.
+        # generateOrder(request) # Not sure if this goes here.
         return request
