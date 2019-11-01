@@ -8,8 +8,8 @@ class PriceViewset(viewsets.ViewSet):
         # This needs total enhancements
         data = request.data.copy()
         print("input", data)
-        quantity = data.pop('quantity', 0)
-        price = DefaultStrategy.price(quantity, **data)
+        products = data.pop('products', [])
+        limit = data.pop('limits', 2)
+        price = DefaultStrategy.price(products, limit)
         output = { 'status': 'OK', 'price': price}
-        print("output", output)
         return Response(output)

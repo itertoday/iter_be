@@ -1,23 +1,27 @@
-
+from core.models import Product
 #I dont like this. will think on better strategies to implement it.
 class DefaultStrategy:
 
     name = "default"
 
     @staticmethod
-    def price(quantity, **kwargs):
-        print("dfs - quantity", quantity)
-        print("kwargs", kwargs)
-        limit = kwargs.get('limit', 4)
-        request_type = kwargs.get('request_type')
+    def price(products, limit=2):
+        total = 0
+        for product in products:
+            product_type, quantity = product['product_type'], product['quantity']
+            
+            if product_type == Product.RELOAD_PRODUCT_TYPE:
+                if quantity >= limit:
+                    total += quantity * 2500
+                elif quantity > 0:
+                    total += 3000
+            
+            if product_type == Product.NEW_PRODUCT_TYPE:
+                total += quantity * 5000
+        return total
+            
 
-        if request_type == "reload product":
-            if quantity >= limit:
-                return quantity * 2500
-            return quantity * 3000
-        
-        if request_type == "new product":
-            return quantity * 5000
+            
 
 
 class DummyStrategy:
