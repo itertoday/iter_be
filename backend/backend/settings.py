@@ -25,10 +25,6 @@ SECRET_KEY = 'a)-$iydsl86badr999yg3tg1^ikwl8q!p=w5!s$eb6qgf!r1k6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-STATIC_URL = '/static/'
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -130,7 +126,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -149,3 +144,7 @@ CORS_ORIGIN_WHITELIST = [ "http://localhost:3000", "http://127.0.0.1:3000" ]
 ALLOWED_HOSTS = ['*']
 
 PRICE_URL = 'http://localhost:8000/pricing/'
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

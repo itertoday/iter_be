@@ -95,6 +95,7 @@ class RequestViewSet(viewsets.ModelViewSet):
     queryset = Request.objects.all() # TODO: show requests per user
     serializer_class = RequestSerializer
     write_serializer_class = RequestWriterSerializer
+    pagination_class = None
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,
     #                       permissions.IsOwnerOrReadOnly,)
 

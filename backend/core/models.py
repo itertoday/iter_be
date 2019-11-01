@@ -14,11 +14,20 @@ class Sponsor(models.Model):
 
 
 class Product(models.Model):
+    NEW_PRODUCT_TYPE = 'Nuevo'
+    RELOAD_PRODUCT_TYPE = 'Recarga'
+
+    PRODUCT_TYPE = (
+        (NEW_PRODUCT_TYPE, "New"),
+        (RELOAD_PRODUCT_TYPE, "Reload"),
+    )
     name = models.CharField(max_length=50)
     sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE, null=True)
-
+    product_type = models.CharField(max_length=100, choices=PRODUCT_TYPE)
+    image_url = models.ImageField(upload_to='static')
+    
     def __str__(self):
-        return self.name
+        return "{} ({})".format(self.name, self.product_type)
 
 
 class Request(models.Model):
@@ -53,21 +62,14 @@ class Request(models.Model):
 
 
 class RequestItem(models.Model):
-    NEW_PRODUCT_TYPE = 'new product'
-    RELOAD_PRODUCT_TYPE = 'reload product'
-
-    REQUEST_TYPE = (
-        (NEW_PRODUCT_TYPE, "New"),
-        (RELOAD_PRODUCT_TYPE, "Reload"),
-    )
+    
 
     request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField()
-    request_type = models.CharField(max_length=100, choices=REQUEST_TYPE)
 
     def __str__(self):
-        return "Item: {} - {} - {}".format(self.quantity, self.request_type, self.product)
+        return "Item: {} - {} - {}".format(self.quantity, self.product)
 
 
 class Order(models.Model):

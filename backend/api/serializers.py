@@ -15,7 +15,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'sponsor')
+        fields = ('id', 'name', 'sponsor', 'image_url', 'product_type')
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -49,7 +49,7 @@ class RequestItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RequestItem
-        fields = ('id', 'quantity', 'request_type', 'product')
+        fields = ('id', 'quantity', 'product')
         depth = 2
 
 
@@ -57,7 +57,7 @@ class RequestItemWriterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RequestItem
-        fields = ('id', 'quantity', 'request_type', 'product')
+        fields = ('id', 'quantity', 'product')
         
 
 class RequestSerializer(serializers.ModelSerializer):

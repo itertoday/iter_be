@@ -21,7 +21,8 @@ from knox import views as knox_views
 from api.views import RequestViewSet, OrderViewSet, ProductViewSet
 from rest_framework import routers
 from price.views import PriceViewset
-
+from django.conf.urls.static import static
+from django.conf import settings
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -41,4 +42,4 @@ urlpatterns = [
     path(r'logoutall/', knox_views.LogoutAllView.as_view(), name='knox_logoutall'),
     path(r'password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     path('hello/', views.HelloView.as_view(), name='hello'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
