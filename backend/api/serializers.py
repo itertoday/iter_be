@@ -63,10 +63,12 @@ class RequestItemWriterSerializer(serializers.ModelSerializer):
 class RequestSerializer(serializers.ModelSerializer):
 
     items = RequestItemSerializer(many=True)
+    user  = UserSerializer(many=False)
 
     class Meta:
         model = Request
         fields = ('start_date', 'end_date', 'repeat', 'user', 'address', 'address2', 'city', 'items')
+        depth = 1
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -75,7 +77,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields ='__all__'
+        fields = ('request', 'price', 'status')
 
 
 class RequestWriterSerializer(serializers.ModelSerializer):
@@ -96,5 +98,5 @@ class RequestWriterSerializer(serializers.ModelSerializer):
             reqItem = RequestItem(**elem)
             reqItem.request = request
             reqItem.save()
-        # generateOrder(request) # Not sure if this goes here.
+        generateOrder(request) # Not sure if this goes here.
         return request

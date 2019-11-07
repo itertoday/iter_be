@@ -108,6 +108,7 @@ class RequestViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all() # TODO: Show this per user only
     serializer_class = OrderSerializer
+    pagination_class = None
 
 
 class ProductViewSet(viewsets.ModelViewSet):

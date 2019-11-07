@@ -5,13 +5,11 @@ import json
 
 def _price(requestItem):
     url = settings.PRICE_URL
-    data = {
+    data = {"products":[{
         'quantity': requestItem.quantity,
-        'request_type': requestItem.request_type
-    }
-
+        'product_type': requestItem.product.product_type
+    }]}
     raw_result = requests.post(url, json=data)
-    print("received in _price: ", raw_result.status_code)
     result = json.loads(raw_result.text)
     return result # {status: OK, price: 4000}
     
