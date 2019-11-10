@@ -140,7 +140,7 @@ DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-CORS_ORIGIN_WHITELIST = [ "http://localhost:3000", "http://127.0.0.1:3000" ]
+CORS_ORIGIN_WHITELIST = [ "http://localhost:3000", "http://127.0.0.1:3000", "https://limitless-springs-67440.herokuapp.com" ]
 
 ALLOWED_HOSTS = ['*']
 
