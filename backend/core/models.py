@@ -3,10 +3,13 @@ from django.contrib.auth.models import User
 from backend import geolocator
 import time
 from geopy.distance import vincenty as distance # TODO: Should wrap this into some sort of abstraction
+from django.db.models.signals import post_save
 
 from supply.models import TransportOrder, LocationSupply, Transport
 from operator import itemgetter
 
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 class Sponsor(models.Model):
     name = models.CharField(max_length=50)
@@ -119,3 +122,9 @@ class Order(models.Model):
 
     def __str__(self):
         return "Order: {}".format(self.id)
+
+@receiver(post_save, sender=Order, dispatch_uid="notify_order_state")
+def notify_order_state(sender, instance, **kwargs):
+    if instance.status == Order.ACCEPTED:
+        print("Send notification to Kafka")
+        

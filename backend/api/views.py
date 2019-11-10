@@ -15,7 +15,11 @@ from knox.views import LoginView as KnoxLoginView
 from django_rest_passwordreset.signals import reset_password_token_created
 from rest_framework import authentication, permissions
 # from rest_framework.response import Response
-from api.serializers import RequestSerializer, RequestWriterSerializer, OrderSerializer, ProductSerializer
+from api.serializers import ( RequestSerializer, 
+                              RequestWriterSerializer, 
+                              OrderSerializer, 
+                              OrderWriterSerializer, 
+                              ProductSerializer)
 from rest_framework import viewsets
 from core.models import Request, Order, Product
 from rest_framework import status
@@ -100,7 +104,6 @@ class RequestViewSet(viewsets.ModelViewSet):
     #                       permissions.IsOwnerOrReadOnly,)
 
     def get_serializer_class(self):
-        print("called", self.action)
         if self.action == 'create':
             return self.write_serializer_class
         return self.serializer_class
@@ -108,7 +111,13 @@ class RequestViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all() # TODO: Show this per user only
     serializer_class = OrderSerializer
+    writer_serializer_class = OrderWriterSerializer
     pagination_class = None
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return self.writer_serializer_class
+        return self.serializer_class
 
 
 class ProductViewSet(viewsets.ModelViewSet):

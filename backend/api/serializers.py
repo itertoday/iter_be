@@ -67,7 +67,7 @@ class RequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Request
-        fields = ('start_date', 'end_date', 'repeat', 'user', 'address', 'address2', 'city', 'items')
+        fields = ('id', 'start_date', 'end_date', 'repeat', 'user', 'address', 'address2', 'city', 'items')
         depth = 1
 
 
@@ -77,7 +77,13 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('request', 'price', 'status')
+        fields = ('id', 'request', 'price', 'status')
+
+class OrderWriterSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Order
+        fields = ('id',  'status')
 
 
 class RequestWriterSerializer(serializers.ModelSerializer):
