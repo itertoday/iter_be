@@ -26,11 +26,17 @@ class Product(models.Model):
     )
     name = models.CharField(max_length=50)
     sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE, null=True)
-    product_type = models.CharField(max_length=100, choices=PRODUCT_TYPE)
+    product_type = models.CharField(max_length=100, choices=PRODUCT_TYPE, null=True)
     image_url = models.ImageField(upload_to='static')
+    base_price= models.DecimalField(max_digits=10, decimal_places=2)
     
     def __str__(self):
         return "{} ({})".format(self.name, self.product_type)
+
+class Address(models.Model):
+    street = models.CharField(help_text="Calle", null=True, max_length=100)
+    comuna = models.CharField(help_text="Comuna", null=True, max_length=100)
+    department = models.CharField(help_text="Departamento", null=True, max_length=100)
 
 
 class Request(models.Model):
@@ -47,7 +53,6 @@ class Request(models.Model):
 
     def update_lat_lon(self):
         address = geolocator.geocode(self.address)
-        print("FOUND: {}".format(address))
         time.sleep(5)
         if address:
             self.latitude = address.latitude
