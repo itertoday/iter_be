@@ -113,7 +113,7 @@ class RequestViewSet(viewsets.ModelViewSet):
 
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class TransportOrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all() # TODO: Show this per user only
     serializer_class = OrderSerializer
     writer_serializer_class = OrderWriterSerializer
@@ -125,18 +125,19 @@ class OrderViewSet(viewsets.ModelViewSet):
         return self.serializer_class
 
 
-    # @action(methods=['get'], detail=False)
-    # def actives(self, request, pk=None ):
-    #     today = datetime.today().date().strftime('%Y-%m-%d')
-    #     order = self.get_object()
-    #     actives = order.filter(request__end_date__gte = today)
-    #     return Response(actives)
-
-class ActiveOrderViewSet(viewsets.ModelViewSet):
+class ClientOrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
-    queryset = Order.objects.filter(request__end_date__gte='2019-11-30')
-    
-        
+    writer_serializer_class = OrderWriterSerializer
+    pagination_class = None
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return self.writer_serializer_class
+        return self.serializer_class
+
+    #Holder while updating login feature
+    def get_queryset(self):
+        return Order.objects.filter(request__user__id__exact=5)    
 
 
 class ProductViewSet(viewsets.ModelViewSet):

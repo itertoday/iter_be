@@ -14,6 +14,8 @@ from operator import itemgetter
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from notification.client import NotificationClient
+from datetime import datetime
+import pytz
 
 class Sponsor(models.Model):
     name = models.CharField(max_length=50)
@@ -83,6 +85,12 @@ class RequestItem(models.Model):
         return str(self.id)
 
 
+class ActiveOrderManager(models.Manager):
+    def get_queryset(self):
+        today = datetime.now(tz=pytz.UTC)
+        min_today = datetime.combine(today, datetime.min.time())
+        return super().get_queryset().filter(request__start_date__gte=min_today, request__end_date__lte=today )
+
 class Order(models.Model):
     PENDING = 'pending'
     ACCEPTED = 'accepted'
@@ -101,6 +109,9 @@ class Order(models.Model):
     price = models.DecimalField(decimal_places=5, max_digits=10) # Calculated by price app endpoint
     status = models.CharField(max_length=20, choices=STATUS)
     tracker = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    actives = ActiveOrderManager()
+    objects = models.Manager()
 
     def save(self, *args, **kwargs):
         super(Order, self).save(*args, **kwargs)

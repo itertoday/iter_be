@@ -18,7 +18,7 @@ from django.urls import path, include
 from rest_framework import routers
 from api import views
 from knox import views as knox_views
-from api.views import RequestViewSet, OrderViewSet, ProductViewSet, ActiveOrderViewSet
+from api.views import RequestViewSet, ClientOrderViewSet, ProductViewSet, TransportOrderViewSet
 from rest_framework import routers
 from price.views import PriceViewset
 from django.conf.urls.static import static
@@ -28,8 +28,8 @@ router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register('requests', RequestViewSet)
 router.register('products', ProductViewSet)
-router.register('orders', OrderViewSet)
-router.register('orders/active', ActiveOrderViewSet)
+router.register('client_orders', ClientOrderViewSet, basename='client-orders')
+router.register('transport_orders', TransportOrderViewSet, basename='transport-orders')
 router.register('pricing', PriceViewset, basename="pricing")
 
 
