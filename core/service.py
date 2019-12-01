@@ -7,7 +7,8 @@ def _price(requestItem):
     url = settings.PRICE_URL
     data = {"products":[{
         'quantity': requestItem.quantity,
-        'product_type': requestItem.product.product_type
+        'product_type': requestItem.product.product_type,
+        'id': requestItem.product.id
     }]}
     raw_result = requests.post(url, json=data)
     result = json.loads(raw_result.text)

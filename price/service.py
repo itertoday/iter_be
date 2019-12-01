@@ -17,7 +17,7 @@ class DefaultStrategy:
             product_id = product.get('id')
             product = Product.objects.get(pk=product_id)
 
-            assert quantity > 0
+            assert quantity >= 0
             
             if product_type == Product.RELOAD_PRODUCT_TYPE:
                 if quantity >= limit:
@@ -28,7 +28,6 @@ class DefaultStrategy:
                 total += quantity * product.base_price
             else:
                 total += quantity * product.base_price
-
         return total
             
 

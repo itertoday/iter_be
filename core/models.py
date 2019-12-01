@@ -1,19 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.serializers import serialize
 from backend import geolocator
 import time
 from geopy.distance import vincenty as distance # TODO: Should wrap this into some sort of abstraction
 from django.db.models.signals import post_save
+import uuid
+import json
 
 from supply.models import TransportOrder, LocationSupply, Transport
 from operator import itemgetter
 
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from notification.client import NotificationClient
 
 class Sponsor(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(models.Model):
@@ -32,11 +39,6 @@ class Product(models.Model):
     
     def __str__(self):
         return "{} ({})".format(self.name, self.product_type)
-
-class Address(models.Model):
-    street = models.CharField(help_text="Calle", null=True, max_length=100)
-    comuna = models.CharField(help_text="Comuna", null=True, max_length=100)
-    department = models.CharField(help_text="Departamento", null=True, max_length=100)
 
 
 class Request(models.Model):
@@ -98,6 +100,7 @@ class Order(models.Model):
     request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="request")
     price = models.DecimalField(decimal_places=5, max_digits=10) # Calculated by price app endpoint
     status = models.CharField(max_length=20, choices=STATUS)
+    tracker = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def save(self, *args, **kwargs):
         super(Order, self).save(*args, **kwargs)
@@ -126,10 +129,15 @@ class Order(models.Model):
             # TransportOrder.objects.create(transport=transport_winner, order=self)
 
     def __str__(self):
-        return "Order: {}".format(self.id)
+        return "Order: {} -> {}".format(self.id, self.status)
 
 @receiver(post_save, sender=Order, dispatch_uid="notify_order_state")
 def notify_order_state(sender, instance, **kwargs):
     if instance.status == Order.ACCEPTED:
-        print("Send notification to Kafka")
-        
+        with NotificationClient() as client:
+            raw_payload =  serialize("json", [instance])
+            objs = json.loads(raw_payload)
+            payload = next(o for o in objs)
+            print("Sending to socket", payload)
+            payload['action'] = 'orderHandler'
+            client.send(json.dumps(payload))

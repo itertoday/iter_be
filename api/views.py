@@ -23,6 +23,9 @@ from api.serializers import ( RequestSerializer,
 from rest_framework import viewsets
 from core.models import Request, Order, Product
 from rest_framework import status
+from rest_framework.decorators import action
+from datetime import datetime
+from rest_framework.response import Response
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -108,6 +111,8 @@ class RequestViewSet(viewsets.ModelViewSet):
             return self.write_serializer_class
         return self.serializer_class
 
+
+
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all() # TODO: Show this per user only
     serializer_class = OrderSerializer
@@ -118,6 +123,20 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return self.writer_serializer_class
         return self.serializer_class
+
+
+    # @action(methods=['get'], detail=False)
+    # def actives(self, request, pk=None ):
+    #     today = datetime.today().date().strftime('%Y-%m-%d')
+    #     order = self.get_object()
+    #     actives = order.filter(request__end_date__gte = today)
+    #     return Response(actives)
+
+class ActiveOrderViewSet(viewsets.ModelViewSet):
+    serializer_class = OrderSerializer
+    queryset = Order.objects.filter(request__end_date__gte='2019-11-30')
+    
+        
 
 
 class ProductViewSet(viewsets.ModelViewSet):
