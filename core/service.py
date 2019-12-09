@@ -3,6 +3,7 @@ import requests
 from django.conf import settings
 import json
 
+
 def _price(requestItem):
     url = settings.PRICE_URL
     data = {"products":[{
@@ -12,7 +13,7 @@ def _price(requestItem):
     }]}
     raw_result = requests.post(url, json=data)
     result = json.loads(raw_result.text)
-    return result # {status: OK, price: 4000}
+    return result  # {status: OK, price: 4000}
     
 
 def generateOrder(request):

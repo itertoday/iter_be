@@ -17,6 +17,7 @@ from notification.client import NotificationClient
 from datetime import datetime
 import pytz
 
+
 class Sponsor(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
@@ -45,9 +46,9 @@ class Product(models.Model):
 
 class Request(models.Model):
     start_date = models.DateTimeField() 
-    end_date = models.DateTimeField()# TODO: Add date range validation
-    repeat   = models.BooleanField(default=False)
-    user     = models.ForeignKey(User, on_delete=models.CASCADE)
+    end_date = models.DateTimeField()  # TODO: Add date range validation
+    repeat = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     # This can go in a seperate class
     address = models.CharField(max_length=1024, blank=False, null=False)
     address2 = models.CharField(max_length=1024, blank= True, null=True)
@@ -74,7 +75,6 @@ class Request(models.Model):
 
 
 class RequestItem(models.Model):
-    
 
     request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
@@ -90,6 +90,7 @@ class ActiveOrderManager(models.Manager):
         today = datetime.now(tz=pytz.UTC)
         min_today = datetime.combine(today, datetime.min.time())
         return super().get_queryset().filter(request__start_date__gte=min_today, request__end_date__lte=today )
+
 
 class Order(models.Model):
     PENDING = 'pending'
@@ -142,11 +143,12 @@ class Order(models.Model):
     def __str__(self):
         return "Order: {} -> {}".format(self.id, self.status)
 
+
 @receiver(post_save, sender=Order, dispatch_uid="notify_order_state")
 def notify_order_state(sender, instance, **kwargs):
     if instance.status == Order.ACCEPTED:
         with NotificationClient() as client:
-            raw_payload =  serialize("json", [instance])
+            raw_payload = serialize("json", [instance])
             objs = json.loads(raw_payload)
             payload = next(o for o in objs)
             print("Sending to socket", payload)

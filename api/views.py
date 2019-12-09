@@ -137,7 +137,7 @@ class ClientOrderViewSet(viewsets.ModelViewSet):
 
     #Holder while updating login feature
     def get_queryset(self):
-        return Order.objects.filter(request__user__id__exact=5)    
+        return Order.objects.filter(request__user__id__exact=5).order_by('-request__end_date')
 
 
 class ProductViewSet(viewsets.ModelViewSet):
