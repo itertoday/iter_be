@@ -26,7 +26,7 @@ django-extensions==2.1.6
 django-heroku==0.3.1
 django-rest-knox==4.1.0
 django-rest-passwordreset==1.0.0
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 docutils==0.14
 emoji==0.5.2
 entrypoints==0.3
