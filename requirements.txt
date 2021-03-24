@@ -64,7 +64,7 @@ python-dateutil==2.8.0
 pytz==2019.2
 pyyaml>=4.2b1
 requests==2.22.0
-rsa==3.4.2
+rsa==4.1
 s3transfer==0.2.0
 six==1.12.0
 soupsieve==1.9.1
